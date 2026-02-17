@@ -1,17 +1,72 @@
 ---
-
+import Layout from '../layouts/layout.astro';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout title="InstaMark - Publish Instantly">
+  <main class="max-w-4xl mx-auto p-6">
+    <article id="viewer" class="hidden prose prose-slate lg:prose-xl max-w-none">
+      </article>
+
+    <div id="editor-container" class="space-y-4">
+      <h1 class="text-3xl font-bold">InstaMark</h1>
+      <p class="text-gray-600">Ketik markdown di bawah. Link di address bar akan terupdate otomatis.</p>
+      <textarea 
+        id="markdown-input" 
+        class="w-full h-96 p-4 border rounded-lg font-mono focus:ring-2 focus:ring-blue-500 outline-none"
+        placeholder="# Judul Markdown Anda..."></textarea>
+      
+      <div class="flex items-center gap-4">
+        <button id="copy-btn" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+          Salin Link Publikasi
+        </button>
+        <span id="char-count" class="text-sm text-gray-500">0 karakter</span>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<script>
+  import { Engine } from '../lib/engine';
+
+  const textarea = document.getElementById('markdown-input') as HTMLTextAreaElement;
+  const viewer = document.getElementById('viewer');
+  const editorContainer = document.getElementById('editor-container');
+  const charCount = document.getElementById('char-count');
+  const copyBtn = document.getElementById('copy-btn');
+
+  // 1. Logika Routing Sederhana
+  const hash = window.location.hash.slice(1);
+  
+  if (hash.startsWith('data=')) {
+    // MODE VIEW: Tampilkan hasil render
+    const rawData = hash.replace('data=', '');
+    const decoded = Engine.decode(rawData);
+    
+    if (decoded && viewer && editorContainer) {
+      editorContainer.classList.add('hidden');
+      viewer.classList.remove('hidden');
+      viewer.innerHTML = Engine.render(decoded);
+    }
+  }
+
+  // 2. Logika Editor (Auto-update URL saat mengetik)
+  textarea?.addEventListener('input', (e) => {
+    const text = (e.target as HTMLTextAreaElement).value;
+    const compressed = Engine.encode(text);
+    
+    // Update counter
+    if (charCount) charCount.innerText = `${compressed.length} characters in URL`;
+    
+    // Update URL tanpa reload halaman
+    const newUrl = `${window.location.pathname}#data=${compressed}`;
+    window.history.replaceState(null, '', newUrl);
+  });
+
+  // 3. Logika Copy Link
+  copyBtn?.addEventListener('click', () => {
+    navigator.clipboard.writeText(window.location.href);
+    const originalText = copyBtn.innerText;
+    copyBtn.innerText = "Tersalin!";
+    setTimeout(() => copyBtn.innerText = originalText, 2000);
+  });
+</script>

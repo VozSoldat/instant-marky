@@ -65,3 +65,11 @@
     @apply bg-slate-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-sm;
   }
 }
+
+.material-symbols-outlined {
+				font-variation-settings:
+					"FILL" 0,
+					"wght" 400,
+					"GRAD" 0,
+					"opsz" 24;
+			}

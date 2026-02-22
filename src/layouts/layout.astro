@@ -13,7 +13,10 @@ import "../styles/global.css";
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="description" content="InstaMark - Publish your markdown instantly" />
+		<meta
+			name="description"
+			content="InstantMarky - Publish your markdown instantly"
+		/>
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
@@ -22,13 +25,19 @@ import "../styles/global.css";
 	</head>
 	<body class="bg-slate-50 text-slate-900 antialiased">
 		<nav class="p-4 border-b bg-white">
-			<div class="max-w-4xl mx-auto font-bold text-xl">InstaMark 📝</div>
+			<div class="max-w-4xl mx-auto font-bold text-xl">InstantMarky</div>
 		</nav>
 
 		<slot />
 
 		<footer class="mt-20 p-8 text-center text-slate-400 text-sm">
-			Built with Astro & TypeScript
+			<p>
+				Visit my GitHub: <a
+					href="https://github.com/VozSoldat/instant-marky"
+					class="text-blue-500 hover:underline">VozSoldat</a
+				>
+			</p>
+			<p>Built with Astro & TypeScript. &copy; 2026 InstantMarky.</p>
 		</footer>
 	</body>
 </html>

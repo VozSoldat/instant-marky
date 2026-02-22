@@ -1,19 +1,16 @@
-import LZString from 'lz-string';
 import { marked } from 'marked';
+import LZString from 'lz-string';
 
 export const Engine = {
-    // Kompres string panjang ke URL fragment
-    encode: (text: string): string => {
-        return LZString.compressToEncodedURIComponent(text);
-    },
+    encode: (text: string) => LZString.compressToEncodedURIComponent(text),
 
-    // Dekompres dari URL fragment
-    decode: (hash: string): string => {
-        return LZString.decompressFromEncodedURIComponent(hash) || "";
-    },
+    decode: (hash: string) => LZString.decompressFromEncodedURIComponent(hash) || "",
 
-    // Render Markdown ke HTML
-    render: (markdown: string): string => {
-        return marked.parse(markdown, { gfm: true, breaks: true }) as string;
+    render: (markdown: string) => {
+        // Tambahkan opsi mangled: false dan headerIds: false jika perlu
+        return marked.parse(markdown, {
+            gfm: true,
+            breaks: true,
+        });
     }
 };

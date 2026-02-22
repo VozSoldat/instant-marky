@@ -1,1 +1,18 @@
 @import "tailwindcss";
+
+/* src/layouts/Layout.astro atau global.css */
+
+/* Dalam file CSS kamu atau <style is:global> */
+@layer base {
+  .prose h1 {
+    @apply text-4xl font-extrabold text-blue-600 mb-6 mt-8;
+  }
+  
+  .prose h2 {
+    @apply text-2xl font-bold text-slate-800 mt-8 mb-4 border-b pb-2;
+  }
+
+  .prose p {
+    @apply mb-4 leading-relaxed text-slate-700;
+  }
+}

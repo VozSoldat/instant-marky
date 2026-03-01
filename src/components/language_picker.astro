@@ -4,37 +4,132 @@ import { languages } from "../i18n/utils";
 import { getLangFromUrl } from "../i18n/utils";
 
 const currentLang = getLangFromUrl(Astro.url);
+const currentLabel = languages[currentLang as keyof typeof languages];
 ---
 
-<div class="flex gap-2 p-1 bg-slate-100 rounded-lg w-fit">
-    {
-        Object.entries(languages).map(([lang, label]) => (
-            <a
-                href={lang === "id" ? "/" : `/${lang}/`}
-                class={`px-3 py-1 rounded-md text-sm font-medium transition ${
-                    currentLang === lang
-                        ? "bg-white shadow-sm text-slate-900"
-                        : "text-slate-500 hover:text-slate-700"
-                }`}
-                data-lang-switcher
+<div class="relative inline-block text-left" id="lang-dropdown">
+    <button
+        type="button"
+        id="lang-button"
+        class="inline-flex justify-between items-center w-fit px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+        aria-expanded="false"
+        aria-haspopup="true"
+    >
+        <span class="flex items-center gap-2">
+            <!-- <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4 text-slate-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
             >
-                {label}
-            </a>
-        ))
-    }
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 5h12M9 3v2m1.048 9.5a18.022 18.022 0 01-3.827-5.802M14 15.5c-.832-1.264-1.812-2.452-2.889-3.532M14.5 12A5 5 0 1110 17h.5"
+                ></path>
+            </svg> -->
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="#e8eaed"
+            >
+                <path
+                    d="M325-111.5q-73-31.5-127.5-86t-86-127.5Q80-398 80-480.5t31.5-155q31.5-72.5 86-127t127.5-86Q398-880 480.5-880t155 31.5q72.5 31.5 127 86t86 127Q880-563 880-480.5T848.5-325q-31.5 73-86 127.5t-127 86Q563-80 480.5-80T325-111.5ZM480-162q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 39.5T660-480q0 21-1.5 40.5T654-400Zm-16-240h118q-29-50-72.5-87T584-782q18 33 31.5 68.5T638-640Zm-234 0h152q-12-44-31-83t-45-75q-26 36-45 75t-31 83Zm-200 0h118q9-38 22.5-73.5T376-782q-56 18-99.5 55T204-640Z"
+                ></path>
+            </svg>
+            {currentLabel}
+        </span>
+        <svg
+            class="w-4 h-4 ml-2 text-slate-400 transition-transform duration-200"
+            id="chevron"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+        >
+            <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"></path>
+        </svg>
+    </button>
+
+    <div
+        id="lang-menu"
+        class="hidden absolute right-0 mt-2 w-40 origin-top-right bg-white border border-slate-200 rounded-lg shadow-xl z-50 ring-1 ring-black ring-opacity-5 focus:outline-none"
+        role="menu"
+        aria-orientation="vertical"
+    >
+        <div class="py-1" role="none">
+            {
+                Object.entries(languages).map(([lang, label]) => (
+                    <a
+                        href={lang === "id" ? "/" : `/${lang}/`}
+                        class={`block px-4 py-2 text-sm transition-colors ${
+                            currentLang === lang
+                                ? "bg-blue-50 text-blue-700 font-semibold"
+                                : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                        }`}
+                        role="menuitem"
+                        data-lang-switcher
+                    >
+                        {label}
+                    </a>
+                ))
+            }
+        </div>
+    </div>
 </div>
 
 <script>
-    // Script untuk mempertahankan #hash saat pindah bahasa
+    const dropdown = document.getElementById("lang-dropdown");
+    const button = document.getElementById("lang-button");
+    const menu = document.getElementById("lang-menu");
+    const chevron = document.getElementById("chevron");
     const switchers = document.querySelectorAll("[data-lang-switcher]");
 
+    // 1. Fungsi Toggle Dropdown
+    function toggleDropdown() {
+        const isHidden = menu?.classList.contains("hidden");
+        if (isHidden) {
+            menu?.classList.remove("hidden");
+            chevron?.classList.add("rotate-180");
+            button?.setAttribute("aria-expanded", "true");
+        } else {
+            menu?.classList.add("hidden");
+            chevron?.classList.remove("rotate-180");
+            button?.setAttribute("aria-expanded", "false");
+        }
+    }
+
+    button?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleDropdown();
+    });
+
+    // 2. Tutup jika klik di luar area dropdown
+    window.addEventListener("click", (e) => {
+        if (!dropdown?.contains(e.target as Node)) {
+            menu?.classList.add("hidden");
+            chevron?.classList.remove("rotate-180");
+        }
+    });
+
+    // 3. Logika pindah bahasa sambil bawa #hash
     switchers.forEach((el) => {
         el.addEventListener("click", (e) => {
             e.preventDefault();
             const targetHref = (el as HTMLAnchorElement).href;
             const currentHash = window.location.hash;
 
-            // Gabungkan path bahasa baru dengan hash data yang ada
+            // Tutup menu sebelum pindah
+            menu?.classList.add("hidden");
+
+            // Eksekusi pindah halaman
             window.location.href = targetHref + currentHash;
         });
     });

@@ -6,6 +6,8 @@ interface Props {
 
 const { title } = Astro.props;
 
+import LanguagePicker from "../components/language_picker.astro";
+
 import "../styles/global.css";
 ---
 
@@ -25,7 +27,12 @@ import "../styles/global.css";
 	</head>
 	<body class="bg-slate-50 text-slate-900 antialiased">
 		<nav class="p-4 border-b bg-white">
-			<div class="max-w-4xl mx-auto font-bold text-xl">InstantMarky</div>
+			<div
+				class="flex justify-between max-w-4xl mx-auto font-bold text-xl"
+			>
+				InstantMarky
+				<LanguagePicker />
+			</div>
 		</nav>
 
 		<slot />

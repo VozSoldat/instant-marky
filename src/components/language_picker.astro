@@ -1,0 +1,41 @@
+---
+// src/components/LanguagePicker.astro
+import { languages } from "../i18n/utils";
+import { getLangFromUrl } from "../i18n/utils";
+
+const currentLang = getLangFromUrl(Astro.url);
+---
+
+<div class="flex gap-2 p-1 bg-slate-100 rounded-lg w-fit">
+    {
+        Object.entries(languages).map(([lang, label]) => (
+            <a
+                href={lang === "id" ? "/" : `/${lang}/`}
+                class={`px-3 py-1 rounded-md text-sm font-medium transition ${
+                    currentLang === lang
+                        ? "bg-white shadow-sm text-slate-900"
+                        : "text-slate-500 hover:text-slate-700"
+                }`}
+                data-lang-switcher
+            >
+                {label}
+            </a>
+        ))
+    }
+</div>
+
+<script>
+    // Script untuk mempertahankan #hash saat pindah bahasa
+    const switchers = document.querySelectorAll("[data-lang-switcher]");
+
+    switchers.forEach((el) => {
+        el.addEventListener("click", (e) => {
+            e.preventDefault();
+            const targetHref = (el as HTMLAnchorElement).href;
+            const currentHash = window.location.hash;
+
+            // Gabungkan path bahasa baru dengan hash data yang ada
+            window.location.href = targetHref + currentHash;
+        });
+    });
+</script>
